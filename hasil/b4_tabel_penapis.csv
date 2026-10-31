@@ -1,0 +1,15 @@
+derau,penapis,PSNR_dB,waktu_ms,KB
+gauss_20,tanpa,22.12,0.0,2.44
+gauss_20,rerata_3,31.39,0.2,5.53
+gauss_20,rerata_5,34.12,0.21,6.33
+gauss_20,gauss_5,32.49,0.42,5.91
+gauss_20,median_3,29.71,0.14,4.99
+gauss_20,median_5,33.35,1.12,6.42
+gauss_20,median_9,35.23,24.42,7.15
+sp_4%,tanpa,18.98,0.0,1.81
+sp_4%,rerata_3,28.1,0.2,4.51
+sp_4%,rerata_5,31.22,0.21,5.68
+sp_4%,gauss_5,29.21,0.4,4.97
+sp_4%,median_3,48.43,0.15,8.48
+sp_4%,median_5,44.66,1.06,8.45
+sp_4%,median_9,40.67,22.62,8.72
