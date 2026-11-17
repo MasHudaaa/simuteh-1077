@@ -1,38 +1,31 @@
-# SIMUTEH - Sistem Pemeriksaan Mutu Daun Teh
-**Evaluasi Praktikum P1-P4 (Computer Vision)**
+# SIMUTEH — Sistem Pemeriksaan Mutu Daun Teh Berbasis Citra
 
-## 📌 Identitas Mahasiswa
-- **Nama**: [Samsul Huda]
-- **NIM**: [2330511077]
-- **SEED Data**: `1077`
-- **Git Tag**: `v0.1-praproses`
-- **Repository**: [https://github.com/MasHudaaa/simuteh-1077](https://github.com/MasHudaaa/simuteh-1077)
+Repositori praktikum berkelanjutan mata kuliah **Computer Vision** (Program Studi Teknik Informatika, Universitas Muhammadiyah Sukabumi).
 
----
+- **NIM / SEED Dataset:** `2330511077` / `SEED = 1077`
+- **Status Rilis:**
+  - `v0.1-praproses`: Rangkaian praproses citra (`src/praproses.py`, `hasil/param_praproses.json`)
+  - `v0.2-tepi`: Evaluasi deteksi tepi Sobel, Prewitt, LoG, dan Canny persentil (`notebook/P5_tepi.ipynb`, `src/utils_tepi.py`)
+  - `v0.3-morfologi`: Operasi morfologi biner, analisis komponen terhubung, dan modul analisis bercak (`notebook/P6_morfologi.ipynb`, `src/bercak.py`, `hasil/param_bercak.json`)
 
-## 🌿 Ringkasan Proyek
-SIMUTEH (*Sistem Pemeriksaan Mutu Daun Teh*) adalah sistem berbasis Computer Vision konvensional untuk melakukan kualifikasi mutu daun teh dan deteksi bercak penyakit secara otomatis. Sistem ini dirancang untuk mengatasi masalah pencahayaan tidak merata, derau citra, dan pencahayaan latar belakang pada lingkungan perkebunan.
+## Ringkasan Hasil Pertemuan 5–6
+1. **Deteksi Tepi (`v0.2-tepi`):** Kanal `R` menghasilkan `0,0` piksel tepi palsu tulang daun pada seluruh kondisi cahaya daun sehat (dibandingkan `846,5` piksel pada kanal `Gray` kondisi bayangan). Gradien morfologi dari mask daun menghasilkan batas daun yang lebih utuh pada citra kontras rendah.
+2. **Morfologi & Analisis Bercak (`v0.3-morfologi`):**
+   - Kombinasi terbaik: ambang `median + 4.0 * MAD` pada kanal `R`, diikuti *opening* dan *closing* dengan SE `elips 5x5`, serta penyaringan komponen terhubung (`luas >= 20 px`, `kebulatan >= 0.5`, `rasio_aspek <= 1.8`).
+   - Evaluasi pada 60 citra menghasilkan **akurasi kelas `90,0%`**, **korelasi luas `0,955`**, dan **galat absolut rerata `0,450%`**.
 
----
+## Cara Menggunakan Modul `src/bercak.py`
+~~~python
+import json, cv2
+from src.praproses import praproses
+from src.bercak import analisis_daun
 
-## ⚙️ Pipeline Praproses Citra
-1. **Penyelarasan Ukuran**: Resizing citra input ke skala standar 640px.
-2. **Perbaikan Kontras**: Penerapan CLAHE (*Contrast Limited Adaptive Histogram Equalization*) pada kanal V (Model Warna HSV).
-3. **Penapisan Derau**: Filter Median 3x3 untuk mengeliminasi derau *salt-and-pepper* tanpa mengaburkan tepi bercak daun.
+param_pra = json.load(open("hasil/param_praproses.json"))
+param_bercak = json.load(open("hasil/param_bercak.json"))
 
----
+img = cv2.imread("data/sintetis/citra/teh_041.png")
+img_bersih = praproses(img, param_pra)
+hasil = analisis_daun(img_bersih, param_bercak)
 
-## 📊 Hasil Evaluasi Utama
-- **Peningkatan Kontras Berkas (KB)**: Terjadi kenaikan rata-rata sebesar **+37.6%** setelah tahap praproses.
-- **Visualisasi**: Seluruh grafik histogram, perbandingan kanal warna, dan pengujian bercak palsu tersimpan pada folder `hasil/`.
-
----
-
-## 📁 Struktur Repositori
-```text
-simuteh-1077/
-├── notebook/      # Notebook eksperimen B1 s.d. B5 (.ipynb)
-├── src/           # Skrip utama Python (buat_dataset_sintetis.py, utils_cv.py, praproses.py)
-├── hasil/         # Gambar visualisasi & file CSV hasil evaluasi
-├── README.md      # Dokumentasi repositori
-└── requirements.txt # Daftar pustaka Python
+print(hasil["kelas"], hasil["persen_bercak"], hasil["jumlah_bercak"])
+~~~
